@@ -1,0 +1,5 @@
+<component name="org.nuxeo.labs.ex.ext.pp.core.schema">
+    <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+        <schema name="ranking" prefix="ranking" src="data/schemas/ranking.xsd"/>
+    </extension>
+</component>

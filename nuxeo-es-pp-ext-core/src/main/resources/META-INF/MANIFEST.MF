@@ -1,0 +1,10 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.nuxeo.labs.es.ext
+Bundle-Version: 1.0.0
+Bundle-Name: nuxeo-es-pp-ext-core
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-es-pp-ext-core;singleton=true
+Nuxeo-Component: OSGI-INF/schema-contrib.xml,
+    OSGI-INF/types-contrib.xml

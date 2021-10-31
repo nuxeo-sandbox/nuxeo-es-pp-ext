@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    hostname: elasticsearch
+    restart: always
+    healthcheck:
+      test: curl -f http://elasticsearch:9200/
+      interval: 2m
+      timeout: 30s
+      retries: 10
+      start_period: 1m
+    ports:
+      - "9200:9200"
+    environment:
+      - cluster.name=docker-cluster
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+  nuxeo:
+    image: nuxeo-es-pp-ext:2021.0.0-SNAPSHOT
+    ports:
+      - "8080:8080"
+      - "8787:8787"
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
+      - NUXEO_DEV=true
+      - NUXEO_PACKAGES=marketplace-disable-studio-snapshot-validation nuxeo-web-ui
+      - NUXEO_CLID=${NUXEO_CLID}
+    volumes:
+      - ./conf.d:/etc/nuxeo/conf.d
+      - nuxeo_data:/var/lib/nuxeo
+volumes:
+  nuxeo_data: {}
+  es_data: {}
