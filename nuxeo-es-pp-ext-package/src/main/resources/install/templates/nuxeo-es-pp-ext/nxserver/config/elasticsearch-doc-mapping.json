@@ -176,6 +176,24 @@
     },
     "ranking:weight": {
       "type": "rank_feature"
+    },
+    "ranking:demoted_keywords": {
+      "type": "keyword",
+      "fields": {
+        "fulltext": {
+          "analyzer": "fulltext",
+          "type": "text"
+        }
+      }
+    },
+    "ranking:promoted_keywords": {
+      "type": "keyword",
+      "fields": {
+        "fulltext": {
+          "analyzer": "fulltext",
+          "type": "text"
+        }
+      }
     }
   }
 }

@@ -116,8 +116,15 @@ public class ExtendedElasticSearchNxqlPageProvider extends ElasticSearchNxqlPage
     }
 
     public NxQueryBuilder getQueryBuilder(CoreSession session) {
-        getParameters();
-        return new ExtendedNxQueryBuilder(getCoreSession());
+        DocumentModel doc = getSearchDocumentModel();
+        String fulltext = null;
+        try {
+            fulltext = (String) doc.getPropertyValue(doc.getType()+":system_fulltext");
+        } catch (NuxeoException e) {
+            log.debug("No fulltext property");
+        }
+
+        return new ExtendedNxQueryBuilder(session,fulltext);
     }
 
 }

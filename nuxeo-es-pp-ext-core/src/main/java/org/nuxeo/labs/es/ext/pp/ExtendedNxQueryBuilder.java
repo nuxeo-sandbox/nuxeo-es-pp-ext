@@ -19,12 +19,17 @@
 
 package org.nuxeo.labs.es.ext.pp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.BoostingQueryBuilder;
+import org.elasticsearch.index.query.ConstantScoreQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RankFeatureQueryBuilder;
 import org.elasticsearch.index.query.RankFeatureQueryBuilders;
+import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -103,11 +108,14 @@ public class ExtendedNxQueryBuilder extends NxQueryBuilder {
 
     protected boolean useUnrestrictedSession;
 
-    public ExtendedNxQueryBuilder(CoreSession coreSession) {
+    protected String fulltext;
+
+    public ExtendedNxQueryBuilder(CoreSession coreSession, String fulltext) {
         super(coreSession);
         session = coreSession;
         repositories.add(coreSession.getRepositoryName());
         fetchFromElasticsearch = Boolean.parseBoolean(Framework.getProperty(FETCH_DOC_FROM_ES_PROPERTY, "false"));
+        this.fulltext = fulltext;
     }
 
     public static String getAggregateFilterId(Aggregate<?> agg) {
@@ -279,9 +287,31 @@ public class ExtendedNxQueryBuilder extends NxQueryBuilder {
                 }
                 esQueryBuilder = addSecurityFilter(esQueryBuilder);
 
+                //add promoted keywords
+                if (StringUtils.isNotEmpty(fulltext)) {
+                    float positive_keyword_boost = Float.parseFloat(Framework.getProperty("elasticsearch.boost.keyword.query.positive.boost","1.0f"));
+                    esQueryBuilder = QueryBuilders.boolQuery().must(esQueryBuilder).should(
+                            new ConstantScoreQueryBuilder(
+                                new SimpleQueryStringBuilder(fulltext).
+                                        field("ranking:promoted_keywords.fulltext").
+                                        analyzer("fulltext").defaultOperator(Operator.OR)).
+                                boost(positive_keyword_boost));
+                    }
+
+                //add demote keywords
+                if (StringUtils.isNotEmpty(fulltext)) {
+                    float negative_keyword_boost = Float.parseFloat(Framework.getProperty("elasticsearch.boost.keyword.query.negative.boost","1.0f"));
+                    esQueryBuilder = new BoostingQueryBuilder(esQueryBuilder,
+                            new SimpleQueryStringBuilder(fulltext).
+                                    field("ranking:demoted_keywords.fulltext").
+                                    analyzer("fulltext").
+                                    defaultOperator(Operator.OR)).
+                            negativeBoost(negative_keyword_boost);
+                }
+
                 //add ranking feature
                 float pivotValue = Float.parseFloat(Framework.getProperty("elasticsearch.ranking.feature.saturation.pivot","0"));
-                float boost = Integer.parseInt(Framework.getProperty("elasticsearch.ranking.feature.saturation.boost","1.0f"));
+                float boost = Float.parseFloat(Framework.getProperty("elasticsearch.ranking.feature.saturation.boost","1.0f"));
 
                 RankFeatureQueryBuilder rankFeatureQueryBuilder = pivotValue > 0 ?
                         RankFeatureQueryBuilders.saturation("ranking:weight",pivotValue) :

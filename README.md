@@ -14,11 +14,16 @@ mvn clean install
 
 ## Ranking metadata
 
-The plugin contains a `Ranking` document facet and a `ranking` schema which contains additional metadata useful for search ranking.
+The plugin contains a `Ranking` document facet and a `ranking` schema which contains additional metadata useful for search ranking:
+- `ranking:weight` value between 1 and 100, default to 10 
+- `ranking:promoted_keywords` a string containing keywords for which the document should be promoted in search results
+- `ranking:demoted_keywords` a string containing keywords for which the document should be demoted in search results
 
 ## ES mapping
 
-A custom ES mapping is included and declares the `ranking:weight` field as a [Rank Feature](https://www.elastic.co/guide/en/elasticsearch/reference/master/rank-feature.html) type.
+A custom ES mapping is included and declares:
+- `ranking:weight` as a [Rank Feature](https://www.elastic.co/guide/en/elasticsearch/reference/master/rank-feature.html) type.
+- `ranking:promoted_keywords.fulltext` and `ranking:demoted_keywords.fulltext` as two analyzed text fields 
 
 ## PageProvider
 
@@ -30,7 +35,42 @@ The `ExtendedElasticSearchNxqlPageProvider` PageProvider leverages the `ranking:
     "bool": {
       "must": [
         {
-          <query generated from NXQL>
+        "boosting": {
+          "positive": {
+            "bool": {
+              "must": [
+                {
+                  "query": "<query generated from NXQL>"
+                }
+              ],
+              "should": [
+                {
+                  "simple_query_string": {
+                    "query": "<fulltext_query>",
+                    "fields": [
+                      "ranking:promoted_keywords.fulltext^1.0"
+                    ],
+                    "analyzer": "fulltext",
+                    "default_operator": "or",
+                    "boost": "<elasticsearch.boost.keyword.query.positive.boost>"
+                  }
+                }
+              ]
+            }
+          },
+          "negative": 
+            {
+              "simple_query_string": {
+                "query": "<fulltext_query>",
+                "fields": [
+                  "ranking:demoted_keywords.fulltext^1.0"
+                ],
+                "analyzer": "fulltext",
+                "default_operator": "or",
+                "boost": "<elasticsearch.boost.keyword.query.negative.boost>"
+              }
+            }
+          }
         }
       ],
       "should": [
@@ -38,9 +78,9 @@ The `ExtendedElasticSearchNxqlPageProvider` PageProvider leverages the `ranking:
           "rank_feature": {
             "field": "ranking:weight",
             "saturation": {
-              "pivot": pivot_value
+              "pivot": "<elasticsearch.ranking.feature.saturation.pivot>"
             },
-            "boost": boost_value
+            "boost": "<elasticsearch.ranking.feature.saturation.boost>"
           }
         }
       ]
@@ -49,19 +89,12 @@ The `ExtendedElasticSearchNxqlPageProvider` PageProvider leverages the `ranking:
 }
 ```
 
-The `pivot_value` and `boost_value` are configured in nuxeo.conf with the following properties:
+`<fulltext_query>` value is taken from the page provider predicate on the fulltext field
 
-```
-elasticsearch.ranking.feature.saturation.pivot=5
-elasticsearch.ranking.feature.saturation.boost=10
-```
-
-This default values will give the following score boost for the following `ranking:weight` values:
+The default values will give the following score boost for the following `ranking:weight` values:
 - 1   ->  0.9 
 - 10  ->  5
 - 100 ->  9
-
-`ranking:weight` default value is `10`. Thus, individual documents can be promoted or demoted in search results simply by increasing or decreasing the value.
 
 # How to Use
 

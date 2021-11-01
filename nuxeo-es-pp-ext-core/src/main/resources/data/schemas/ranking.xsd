@@ -9,4 +9,6 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
+    <xs:element name="promoted_keywords" type="xs:string"/>
+    <xs:element name="demoted_keywords" type="xs:string"/>
 </xs:schema>

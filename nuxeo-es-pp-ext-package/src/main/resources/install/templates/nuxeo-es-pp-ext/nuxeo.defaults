@@ -6,3 +6,5 @@ nuxeo.template.includes=common
 
 elasticsearch.ranking.feature.saturation.pivot=5
 elasticsearch.ranking.feature.saturation.boost=10
+elasticsearch.boost.keyword.query.negative.boost=0.5
+elasticsearch.boost.keyword.query.positive.boost=5
