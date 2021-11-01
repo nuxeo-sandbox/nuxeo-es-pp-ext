@@ -64,6 +64,8 @@
           <artifact groupId="nuxeo-studio" />
           <!-- Filter out your artifacts using their groupId for instance -->
           <artifact groupId="org.nuxeo.labs.es.ext*" />
+          <artifact groupId="com.google.protobuf"/>
+          <artifact groupId="org.nuxeo.build"/>
         </excludes>
       </artifact:set>
     </copy>

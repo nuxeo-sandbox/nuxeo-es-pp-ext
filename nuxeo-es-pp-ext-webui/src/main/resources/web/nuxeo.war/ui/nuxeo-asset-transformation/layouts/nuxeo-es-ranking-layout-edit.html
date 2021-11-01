@@ -1,0 +1,46 @@
+<link rel="import" href="./nuxeo-es-ranking-behavior.html">
+
+<!--
+`nuxeo-es-ranking-layout-edit`
+@group Nuxeo UI
+@element nuxeo-es-ranking-layout-edit
+-->
+<dom-module id="nuxeo-es-ranking-layout-edit">
+
+    <template>
+        <style include="nuxeo-styles">
+            *[role=widget] {
+                margin-bottom: 16px;
+                display:block;
+            }
+        </style>
+
+        <nuxeo-select name="ranking:weight" role="widget" label="[[i18n('label.search.ranking.weight')]]"
+                      options="[[rankingOptions]]" selected="{{document.properties.ranking:weight}}">
+        </nuxeo-select>
+
+        <nuxeo-input role="widget"
+                     label="[[i18n('label.ranking.promoted.keywords')]]"
+                     name="ranking:promoted_keywords"
+                     value="{{document.properties.ranking:promoted_keywords}}">
+        </nuxeo-input>
+
+        <nuxeo-input role="widget"
+                     label="[[i18n('label.ranking.demoted.keywords')]]"
+                     name="ranking:demoted_keywords"
+                     value="{{document.properties.ranking:demoted_keywords}}">
+        </nuxeo-input>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'nuxeo-es-ranking-layout-edit',
+            behaviors: [Nuxeo.LayoutBehavior, Nuxeo.RankingBehavior],
+            properties: {
+                document: Object
+            }
+        });
+    </script>
+
+</dom-module>
