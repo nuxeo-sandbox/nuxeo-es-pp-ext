@@ -1,0 +1,45 @@
+<link rel="import" href="./nuxeo-es-ranking-behavior.html">
+
+<!--
+`nuxeo-es-ranking-layout-view`
+@group Nuxeo UI
+@element nuxeo-es-ranking-layout-view
+-->
+<dom-module id="nuxeo-es-ranking-layout-view">
+
+    <template>
+        <style include="nuxeo-styles">
+            *[role=widget] {
+                margin-bottom: 16px;
+                display:block;
+            }
+        </style>
+
+        <nuxeo-select name="ranking:weight" role="widget" label="[[i18n('label.search.ranking.weight')]]"
+                      options="[[rankingOptions]]" selected="{{document.properties.ranking:weight}}" readonly disabled>
+        </nuxeo-select>
+
+        <div role="widget" hidden$="[[_isEmpty(document,'ranking:promoted_keywords')]]">
+            <label>[[i18n('label.ranking.promoted.keywords')]]</label>
+            <div name="ranking:promoted_keywords">[[document.properties.ranking:promoted_keywords]]</div>
+        </div>
+
+        <div role="widget" hidden$="[[_isEmpty(document,'ranking:demoted_keywords')]]">
+            <label>[[i18n('label.ranking.demoted.keywords')]]</label>
+            <div name="ranking:demoted_keywords">[[document.properties.ranking:demoted_keywords]]</div>
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'nuxeo-es-ranking-layout-view',
+            behaviors: [Nuxeo.LayoutBehavior, Nuxeo.RankingBehavior],
+            properties: {
+                document: Object
+            }
+        });
+    </script>
+
+</dom-module>
+

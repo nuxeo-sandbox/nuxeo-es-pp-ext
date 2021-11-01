@@ -1,0 +1,9 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.nuxeo.labs.es.ext
+Bundle-Version: 1.0.0
+Bundle-Name: nuxeo-es-pp-ext-webui
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-es-pp-ext-webui;singleton=true
+Nuxeo-Component: OSGI-INF/webresources-contrib.xml

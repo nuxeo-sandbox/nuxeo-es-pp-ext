@@ -1,0 +1,8 @@
+{
+  "label.search.ranking.weight":"Search Ranking",
+  "label.ranking.demote":"Demote",
+  "label.ranking.normal":"Default",
+  "label.ranking.boost":"Promote",
+  "label.ranking.promoted.keywords":"Promote for Keywords",
+  "label.ranking.demoted.keywords":"Demote for Keywords"
+}

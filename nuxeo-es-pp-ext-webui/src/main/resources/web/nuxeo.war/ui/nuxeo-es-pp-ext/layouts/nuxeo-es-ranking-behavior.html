@@ -1,0 +1,50 @@
+<script>
+    var Nuxeo = Nuxeo || {};
+    (function() {
+
+        /**
+         * @polymerBehavior Nuxeo.RankingBehavior
+         */
+        Nuxeo.RankingBehavior = {
+
+            properties: {
+
+                rankingOptions: {
+                    type: Array,
+                    computed: '_computeRankingOptions(document)'
+                }
+            },
+
+            _computeRankingOptions: function () {
+                return [
+                    {
+                        id: 1,
+                        label: this.i18n('label.ranking.demote'),
+                    }, {
+                        id: 10,
+                        label: this.i18n('label.ranking.normal'),
+                    }, {
+                        id: 100,
+                        label: this.i18n('label.ranking.boost'),
+                    }
+                ];
+            },
+
+            _propertyDeepfind: function(properties, path){
+                var value = properties;
+                var segments =path.split('.');
+
+                segments.forEach(function(segment) {
+                    value = value ? value[segment] : value;
+                });
+
+                return value;
+            },
+
+            _isEmpty: function(doc,path) {
+                var value = this._propertyDeepfind(doc.properties,path);
+                return value === undefined || value === null || (value.length !== undefined && value.length===0);
+            },
+        }
+    })();
+</script>

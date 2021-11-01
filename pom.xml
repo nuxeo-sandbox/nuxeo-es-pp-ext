@@ -23,6 +23,7 @@
 
   <modules>
     <module>nuxeo-es-pp-ext-core</module>
+    <module>nuxeo-es-pp-ext-webui</module>
     <module>nuxeo-es-pp-ext-package</module>
     <module>nuxeo-es-pp-ext-docker</module>
   </modules>
@@ -40,6 +41,11 @@
       <dependency>
         <groupId>org.nuxeo.labs.es.ext</groupId>
         <artifactId>nuxeo-es-pp-ext-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.labs.es.ext</groupId>
+        <artifactId>nuxeo-es-pp-ext-webui</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
