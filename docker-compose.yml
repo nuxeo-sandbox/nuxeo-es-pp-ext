@@ -19,7 +19,7 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
   nuxeo:
-    image: nuxeo-es-pp-ext:2021.3.0-SNAPSHOT
+    image: nuxeo-es-pp-ext:2021.4.0-SNAPSHOT
     ports:
       - "8080:8080"
       - "8787:8787"
